@@ -1,12 +1,39 @@
-import React from 'react'
-import { Button } from "@/components/ui/button";
+import React from "react";
+import "react-toastify/dist/ReactToastify.css";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import RootLayout from "./pages/RootLayout";
+import Home from "./pages/Home";
+import LoginOrRegister from "./pages/LoginOrRegister";
+import { Toaster } from "./components/ui/sonner";
+import Shared from "./pages/Shared";
+import Recent from "./pages/Recent";
+import Favorites from "./pages/favorites";
+import Tags from "./pages/Tags";
+import Important from "./pages/Important";
+import Trash from "./pages/Trash";
+import Setting from "./pages/Setting";
 
 const App = () => {
   return (
     <div>
-      <Button>Click me</Button>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<RootLayout />}>
+            <Route index element={<Home />} />
+            <Route path="/shared" element={<Shared />} />
+            <Route path="/recent" element={<Recent />} />
+            <Route path="/favorites" element={<Favorites />} />
+            <Route path="/tags" element={<Tags />} />
+            <Route path="/important" element={<Important />} />
+            <Route path="/trash" element={<Trash />} />
+            <Route path="/setting" element={<Setting />} />
+          </Route>
+          <Route path="/login-or-register" element={<LoginOrRegister />} />
+        </Routes>
+      </BrowserRouter>
+      <Toaster />
     </div>
   );
-}
+};
 
-export default App
+export default App;
