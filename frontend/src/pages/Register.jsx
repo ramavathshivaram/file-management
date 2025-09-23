@@ -15,6 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import useUserStore from "@/store/userStore";
 
 // ✅ Validation Schema
 const registerSchema = z.object({
@@ -24,6 +25,7 @@ const registerSchema = z.object({
 });
 
 export default function RegisterForm() {
+  const setUser = useUserStore((state) => state.setUser);
   const navigate = useNavigate();
   const form = useForm({
     resolver: zodResolver(registerSchema),
@@ -37,6 +39,7 @@ export default function RegisterForm() {
   const onSubmit = async (values) => {
     console.log("Register data:", values);
     let res = await register(values);
+    setUser(res.user);
     console.log(res);
     toast("register success");
     navigate("/");

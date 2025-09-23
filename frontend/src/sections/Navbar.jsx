@@ -1,38 +1,72 @@
-import React from "react";
-import { Search, User } from "lucide-react";
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import {
+  Search,
+  Upload,
+  Bell,
+  User,
+  ChevronDown,
+  Moon,
+  Sun,
+  X,
+  FolderPlus,
+  FileUp,
+  Link,
+} from "lucide-react";
 import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Avatar, AvatarImage, AvatarFallback } from "../components/ui/avatar";
+import { Badge } from "../components/ui/badge";
+import { Separator } from "../components/ui/separator";
+import SearchBar from "@/components/SearchBar";
+import Notifications from "@/components/Notifications";
+import UserMenu from "@/components/UserMenu";
 
-import SearchBar from "../components/SearchBar";
-import { useNavigate } from "react-router-dom";
+const Navbar = ({ isDarkMode, onToggleDarkMode }) => {
 
-const Navbar = () => {
-  const navigate = useNavigate();
-  const token = localStorage.getItem("token");
+
 
   return (
-    <nav className="border-b h-[6vh] flex items-center justify-around px-4 fixed w-screen z-9 top-0 bg-white">
-      {/* Logo / App name */}
-      <div>
-        <h1 className="font-bold text-xl">File</h1>
-      </div>
-
-      {/* Search bar */}
-      <div className="flex items-center gap-2 border px-2 rounded w-1/2 relative">
-        <Search />
+    <motion.header
+      initial={false}
+      animate={{
+        boxShadow: "0 0 0 rgba(0,0,0,0)",
+      }}
+      className="bg-background border-b border-border sticky top-0 z-50 transition-shadow duration-200"
+    >
+      <div className="flex items-center justify-evenly w-screen h-16 px-6">
+        {/* Left Section */}
+        <h1 className="text-2xl uppercase ">file</h1>
+        {/* search box */}
         <SearchBar />
-      </div>
+        {/* Right Section */}
+        <div className="flex items-center space-x-2">
+          {/* Upload Button */}
 
-      <div className="flex items-center gap-4">
-        <User className="cursor-pointer" />
-        <Button onClick={() => {
-          localStorage.removeItem("token")
-          navigate("/login-or-register")
-        }
-        }>
-          {token ? "Logout" : "Login"}
-        </Button>
+          {/* Dark Mode Toggle */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onToggleDarkMode}
+            className="p-2"
+          >
+            <motion.div
+              initial={false}
+              animate={{ rotate: isDarkMode ? 180 : 0 }}
+              transition={{ type: "spring", damping: 20 }}
+            >
+              {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+            </motion.div>
+          </Button>
+
+          {/* Notifications */}
+          <Notifications />
+
+          {/* User Menu */}
+          <UserMenu />
+        </div>
       </div>
-    </nav>
+    </motion.header>
   );
 };
 

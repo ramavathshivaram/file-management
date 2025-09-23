@@ -7,11 +7,19 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { Button } from "@/components/ui/button";
+import UploadButton from "@/components/UploadButton";
 
-const History = ({ historydata }) => {
+const historydata = [
+  { id: 1, name: "Home" },
+  { id: 2, name: "Documents" },
+  { id: 3, name: "Downloads" },
+  { id: 4, name: "Pictures" },
+];
+const History = ( ) => {
   return (
-    <div>
-      <Breadcrumb className="p-3 border-b w-full">
+    <div className="w-full flex items-center justify-between border-b p-2">
+      <Breadcrumb>
         <BreadcrumbList>
           {historydata ? (
             historydata.map((item, index) => (
@@ -23,12 +31,13 @@ const History = ({ historydata }) => {
               </>
             ))
           ) : (
-            <BreadcrumbItem>
+            <BreadcrumbItem key={1}>
               <BreadcrumbLink>Home</BreadcrumbLink>
             </BreadcrumbItem>
           )}
         </BreadcrumbList>
       </Breadcrumb>
+      <UploadButton />
     </div>
   );
 };

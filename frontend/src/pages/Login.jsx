@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { login } from "../helper/api";
+import useUserStore from "@/store/userStore";
 
 // Zod validation schema
 const loginSchema = z.object({
@@ -23,6 +24,7 @@ const loginSchema = z.object({
 });
 
 export default function LoginForm() {
+  const setUser = useUserStore((state) => state.setUser);
   const navigate = useNavigate();
   const form = useForm({
     resolver: zodResolver(loginSchema),
@@ -35,9 +37,10 @@ export default function LoginForm() {
   const onSubmit = async (values) => {
     try {
       const response = await login(values);
+      console.log(response.user);
       toast("Login successful");
+      setUser(response.user);
       navigate("/");
-      console.log(values)
     } catch (error) {
       toast.error(error.message);
     }

@@ -29,9 +29,10 @@ const App = () => {
             <Route path="/setting" element={<Setting />} />
           </Route>
           <Route path="/login-or-register" element={<LoginOrRegister />} />
+          <Route path="*" element={<div>404 Not Found</div>} />
         </Routes>
       </BrowserRouter>
-      <Toaster />
+      <Toaster position="top-right"/>
     </div>
   );
 };

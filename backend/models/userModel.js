@@ -13,7 +13,12 @@ const userSchema = new Schema(
     loginAttempts: { type: Number, default: 0 },
     lastLoginAt: { type: Date },
     isActive: { type: Boolean, default: true },
-    rootFolderId: [
+    importantItemsCount: { type: Number, default: 0 },
+    favoriteItemsCount: { type: Number, default: 0 },
+    recentItemsCount: { type: Number, default: 0 },
+    trashedItemsCount: { type: Number, default: 0 },
+    rootFolderCount: { type: Number, default: 0 },
+    rootFolder: [
       {
         id: { type: Schema.Types.ObjectId, required: true },
         name: { type: String, required: true },

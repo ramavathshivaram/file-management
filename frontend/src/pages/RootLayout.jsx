@@ -6,9 +6,9 @@ import { SidebarProvider } from '@/components/ui/sidebar';
 
 const RootLayout = () => {
   return (
-    <div className='grid grid-cols-1'>
+    <div>
       <Navbar />
-      <SidebarProvider className="pt-15">
+      <SidebarProvider className="h-screen">
         <AppSidebar />
         <Outlet />
       </SidebarProvider>
