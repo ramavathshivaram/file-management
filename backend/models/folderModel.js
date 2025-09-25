@@ -37,7 +37,7 @@ const folderSchema = new Schema({
       uploadedAt: { type: Date, default: Date.now },
       width: { type: Number },
       height: { type: Number },
-      asceptRatio: { type: String },
+      aspectRatio: { type: String },
     },
   ],
   createdAt: { type: Date, default: Date.now },

@@ -9,6 +9,7 @@ const CreateFolderForm = ({ setCreateFolderFormOpen }) => {
   const queryClient = useQueryClient();
   const currentFolderId = useFolderStore((state) => state.currentFolderId);
   const [folderName, setFolderName] = useState("");
+  console.log("currdent folder",currentFolderId)
 
   // ✅ React Query mutation
   const mutation = useMutation({

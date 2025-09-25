@@ -55,15 +55,21 @@ export default function RegisterForm() {
   const onSubmit = async (values) => {
     console.log("Register data:", values);
     let res = await register(values);
-    setUser(res.user);
-    setImportantItemsCount(res.user.importantItemsCount || 0);
-    setFavoriteItemsCount(res.user.favoriteItemsCount || 0);
-    setRecentItemsCount(res.user.recentItemsCount || 0);
-    setTrashedItemsCount(res.user.trashedItemsCount || 0);
-    setStorageUsed(res.storageUsed || 0);
-    setStorageLimit(res.storageLimit || 0);
-    setRootFolderCount(res.user.rootFolderCount || 0);
     console.log(res);
+    const user = res?.user;
+    if (!user) {
+      toast.error("Registration response did not include a user payload");
+      return;
+    }
+
+    setUser(user);
+    setImportantItemsCount(user.importantItemsCount ?? 0);
+    setFavoriteItemsCount(user.favoriteItemsCount ?? 0);
+    setRecentItemsCount(user.recentItemsCount ?? 0);
+    setTrashedItemsCount(user.trashedItemsCount ?? 0);
+    setStorageUsed(user.storageUsed ?? 0);
+    setStorageLimit(user.storageLimit ?? 0);
+    setRootFolderCount(user.rootFolderCount ?? 0);
     toast.success("register success");
     navigate("/");
   };
