@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import CardComponent from "@/components/CardComponent";
 import { useQuery } from "@tanstack/react-query";
 import { getFolderContent } from "@/helper/api";
 import useFolderStore from "@/store/folderStore";
 
-const FileExplorer = ({ rootFolderId }) => {
+const FileExplorer = () => {
   const addPathHistory = useFolderStore((state) => state.addPathHistory);
-  const [currentFolderId, setCurrentFolderId] = useState(rootFolderId);
+  const currentFolderId = useFolderStore((state) => state.currentFolderId);
+  // const [currentFolderId, setCurrentFolderId] = useState(rootFolderId);
+
 
   const { data, isLoading } = useQuery({
     queryKey: ["folders", currentFolderId],
@@ -42,7 +44,6 @@ const FileExplorer = ({ rootFolderId }) => {
             isImportant={folder.isImportant}
             type="folder"
             folderId={folder.folderId}
-            onFolderClick={setCurrentFolderId}
           />
         ))
       )}

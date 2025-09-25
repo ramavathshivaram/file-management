@@ -7,6 +7,11 @@ export const useFolderStore = create(
       pathHistory: [],
       currentFolderId: null,
 
+      addCurrentFolderId: (folderId) =>
+        set(() => ({
+          currentFolderId: folderId,
+        })),
+
       addPathHistory: (folder) =>
         set((state) => {
           console.log("add Path ", folder);

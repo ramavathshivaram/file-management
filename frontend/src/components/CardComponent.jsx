@@ -16,6 +16,7 @@ import {
   Component,
 } from "lucide-react";
 import Player from "@/pages/Player";
+import useFolderStore from "@/store/folderStore";
 
 const CardComponent = ({
   name,
@@ -23,13 +24,15 @@ const CardComponent = ({
   isImportant = false,
   type = "folder",
   folderId,
-  onFolderClick,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const addCurrentFolderId = useFolderStore(
+    (state) => state.addCurrentFolderId
+  );
 
   const handleClick = () => {
-    if (type === "folder" && onFolderClick) {
-      onFolderClick(folderId);
+    if (type === "folder") {
+      addCurrentFolderId(folderId);
     } else {
       setIsModalOpen(true);
     }
