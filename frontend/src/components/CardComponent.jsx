@@ -7,52 +7,46 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
-  AudioLines,
-  Component,
-  File,
   Folder,
+  File,
   Image,
-  Star,
   Video,
+  AudioLines,
+  Star,
+  Component,
 } from "lucide-react";
 import Player from "@/pages/Player";
 
-const cardMap = {
-  folder: {
-    icon: <Folder className="w-4/5 h-4/5 text-gray-600" strokeWidth={1} />,
-    onClickFnc: () => alert("Folder clicked!"),
-  },
-  file: {
-    icon: <File className="w-4/5 h-4/5 text-gray-600" strokeWidth={1} />,
-  },
-  img: {
-    icon: <Image className="w-4/5 h-4/5 text-gray-600" strokeWidth={1} />,
-  },
-  video: {
-    icon: <Video className="w-4/5 h-4/5 text-gray-600" strokeWidth={1} />,
-  },
-  audio: {
-    icon: <AudioLines className="w-4/5 h-4/5 text-gray-600" strokeWidth={1} />,
-  },
-};
-
 const CardComponent = ({
-  name = "Video",
+  name,
   isFavorite = false,
-  isImportant = true,
+  isImportant = false,
   type = "folder",
-  id = 1,
+  folderId,
+  onFolderClick,
 }) => {
-  const [model, setModel] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleClick = () => {
+    if (type === "folder" && onFolderClick) {
+      onFolderClick(folderId);
+    } else {
+      setIsModalOpen(true);
+    }
+  };
+
+  const iconMap = {
+    folder: <Folder className="w-4/5 h-4/5 text-gray-600" strokeWidth={1} />,
+    file: <File className="w-4/5 h-4/5 text-gray-600" strokeWidth={1} />,
+    img: <Image className="w-4/5 h-4/5 text-gray-600" strokeWidth={1} />,
+    video: <Video className="w-4/5 h-4/5 text-gray-600" strokeWidth={1} />,
+    audio: <AudioLines className="w-4/5 h-4/5 text-gray-600" strokeWidth={1} />,
+  };
+
   return (
     <Card
       className="w-full aspect-square gap-0 hover:shadow-lg transition-shadow group/card"
-      onClick={
-        cardMap[type]?.onClickFnc ||
-        (() => {
-          setModel(true);
-        })
-      }
+      onClick={handleClick}
     >
       <CardHeader className="flex justify-end group-hover/card:opacity-70 opacity-0 -mt-4">
         <Component
@@ -72,7 +66,7 @@ const CardComponent = ({
       </CardHeader>
 
       <CardContent className="flex flex-col items-center justify-center">
-        {cardMap[type]?.icon || (
+        {iconMap[type] || (
           <Folder className="w-4/5 h-4/5 text-gray-600" strokeWidth={1} />
         )}
       </CardContent>
@@ -80,11 +74,12 @@ const CardComponent = ({
       <CardFooter className="text-center">
         <CardTitle className="truncate">{name}</CardTitle>
       </CardFooter>
-      {model && (
+
+      {isModalOpen && (
         <Player
-          URL={"https://www.youtube.com/watch?v=RlPNh_PBZb4"}
-          type={"video"}
-          setModel={setModel}
+          URL="https://www.youtube.com/watch?v=RlPNh_PBZb4"
+          type={type}
+          setModel={setIsModalOpen}
         />
       )}
     </Card>

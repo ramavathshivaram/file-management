@@ -6,7 +6,6 @@ const userSchema = new Schema(
   {
     userName: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
-    // phoneNumber: { type: Number },
     avatar: { type: String, default: "" },
     dob: { type: Date },
     password: { type: String, required: true },
@@ -18,17 +17,10 @@ const userSchema = new Schema(
     recentItemsCount: { type: Number, default: 0 },
     trashedItemsCount: { type: Number, default: 0 },
     rootFolderCount: { type: Number, default: 0 },
-    rootFolder: [
-      {
-        id: { type: Schema.Types.ObjectId, required: true },
-        name: { type: String, required: true },
-        type: {
-          type: String,
-          enum: ["folder", "files", "img", "video", "audio"],
-          default: "folder",
-        },
-      },
-    ],
+    rootFolderId: {
+      type: Schema.Types.ObjectId,
+      ref: "Folder",
+    },
     allItems: [
       {
         id: { type: Schema.Types.ObjectId, required: true },

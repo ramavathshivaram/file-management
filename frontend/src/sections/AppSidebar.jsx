@@ -16,12 +16,11 @@ import {
   Share2,
   Component,
 } from "lucide-react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { Progress } from "@/components/ui/progress";
 import useCountStore from "@/store/countStore";
 
 const AppSidebar = () => {
-  const navigate = useNavigate();
   const importantItemsCount = useCountStore(
     (state) => state.importantItemsCount
   );
@@ -30,11 +29,12 @@ const AppSidebar = () => {
   const trashedItemsCount = useCountStore((state) => state.trashedItemsCount);
   const storageUsed = useCountStore((state) => state.storageUsed);
   const storageLimit = useCountStore((state) => state.storageLimit);
+  const rootFolderCount = useCountStore((state) => state.rootFolderCount);
   const items = [
     {
       title: "Home",
       icon: <Home className="size-5 mx-2" />,
-      count: 10,
+      count: rootFolderCount,
       navigate: "/",
     },
     {

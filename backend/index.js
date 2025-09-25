@@ -4,12 +4,14 @@ const express = require("express");
 const mongoDB = require("./configs/mongoDB");
 const { registerUser, loginUser } = require("./controllers/userControllers");
 const verifyJWT = require("./middlewares/verifyJWT");
+const folderRoutes = require("./routes/folderRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 //USER ROUTES
 app.post("/api/users/register", registerUser);
@@ -21,6 +23,7 @@ app.use(verifyJWT);
 //app.use("/api/users", require("./routes/userRoutes"));
 
 //FOLER ROUTES
+app.use("/api/folders", folderRoutes);
 
 //FILE ROUTES
 

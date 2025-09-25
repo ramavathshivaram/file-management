@@ -11,10 +11,12 @@ const VideoPlayer = ({ url, poster }) => {
           src={url}
           poster={poster}
           controls
+          aria-label="Video player"
+          onError={(e) => console.error("Video failed to load:", e)}
           className="w-full h-auto max-h-full aspect-video object-contain"
         >
           Your browser does not support the video tag.
-        </video>
+        </video>{" "}
       </Card>
     </div>
   );

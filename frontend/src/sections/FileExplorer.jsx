@@ -2,37 +2,41 @@ import React, { useState } from "react";
 import CardComponent from "@/components/CardComponent";
 import { useQuery } from "@tanstack/react-query";
 import { getFolderContent } from "@/helper/api";
+import useFolderStore from "@/store/folderStore";
 
-const FileExplorer = ({ rootFolder }) => {
-  const [currentFolder, setCurrentFolder] = useState({
-    id: null,
-    children: rootFolder, // store root as children
-  });
+const FileExplorer = ({ rootFolderId }) => {
+  const addPathHistory = useFolderStore((state) => state.addPathHistory);
+  const [currentFolderId, setCurrentFolderId] = useState(rootFolderId);
 
   const { data, isLoading } = useQuery({
-    queryKey: ["folders", currentFolder.id],
-    queryFn: async () => {
-      return await getFolderContent(currentFolder.id);
+    queryKey: ["folders", currentFolderId],
+    queryFn: async () => await getFolderContent(currentFolderId),
+    onSuccess: (res) => {
+      addPathHistory({
+        id: res.folder._id,
+        name:
+          res.folder.folderName === "rootFolder"
+            ? "Home"
+            : res.folder.folderName,
+      });
     },
-    enabled: currentFolder.id !== null,
+    keepPreviousData: true,
   });
-
-  const itemsToShow = currentFolder.id === null ? currentFolder.children : data;
 
   return (
     <div className="p-2 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 overflow-y-auto">
-      {isLoading ? (
+      {isLoading || !data?.folder ? (
         <p>Loading...</p>
       ) : (
-        itemsToShow?.map((item, index) => (
+        data.folder.subFolders?.map((folder) => (
           <CardComponent
-            key={item.id || index}
-            name={item.name}
-            isImportant={item.isImportant}
-            isFavorite={item.isFavorite}
-            id={item.id}
-            type={item.type}
-            onClick={() => setCurrentFolder(item)} // navigate deeper
+            key={folder._id}
+            name={folder.folderName}
+            isFavorite={folder.isFavorite}
+            isImportant={folder.isImportant}
+            type="folder"
+            folderId={folder._id}
+            onFolderClick={setCurrentFolderId}
           />
         ))
       )}

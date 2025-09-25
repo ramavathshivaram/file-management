@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toast } from "sonner";
 
 const URL = "http://localhost:3000/api";
 
@@ -14,6 +15,20 @@ API.interceptors.request.use((req) => {
   }
   return req;
 });
+
+API.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user-storage");
+      localStorage.removeItem("folder-store");
+      window.location.href = "/login-or-register";
+      toast.error("Session expired. Please log in again.");
+    }
+    return Promise.reject(error);
+  }
+);
 
 // USER API FETCHING
 const login = async (formData) => {
@@ -32,24 +47,18 @@ const register = async (formData) => {
   return res.data;
 };
 
-const getData = async () => {
-  console.log("📥 Fetching user details...");
-  const res = await API.get("/user/getUserDetails");
-  console.log("✅ User details response:", res.data);
-  return res.data.user;
-};
-
 // FOLDER API FETCHING
 const createFolder = async (formData) => {
   console.log("📂 Create folder request:", formData);
-  const res = await API.post("/folder/create", formData);
+  const res = await API.post("/folders/create", formData);
+  toast.success("Folder created successfully");
   console.log("✅ Create folder response:", res.data);
   return res.data;
 };
 
 const getFolderContent = async (folderId) => {
   console.log("📂 Get folder content request:", folderId);
-  const res = await API.get(`/folder/${folderId}`);
+  const res = await API.get(`/folders/${folderId}`);
   console.log("✅ Folder content response:", res.data);
   return res.data;
 };
@@ -68,7 +77,7 @@ const renameFolder = async (folderId) => {
 };
 const moveFolder = async (obj) => {
   console.log("📂 move folder request:", obj);
-  const res = await API.patch(`/folder/move`,obj);
+  const res = await API.patch(`/folder/move`, obj);
   console.log("✅ Folder content response:", res);
   return res.data;
 };
@@ -76,7 +85,6 @@ const moveFolder = async (obj) => {
 export {
   login,
   register,
-  getData,
   createFolder,
   getFolderContent,
   deleteFolder,

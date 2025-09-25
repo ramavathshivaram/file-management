@@ -2,7 +2,6 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { register } from "../helper/api";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -16,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import useUserStore from "@/store/userStore";
+import useCountStore from "@/store/countStore";
 
 // ✅ Validation Schema
 const registerSchema = z.object({
@@ -26,6 +26,22 @@ const registerSchema = z.object({
 
 export default function RegisterForm() {
   const setUser = useUserStore((state) => state.setUser);
+  const setImportantItemsCount = useCountStore(
+    (state) => state.setImportantItemsCount
+  );
+  const setFavoriteItemsCount = useCountStore(
+    (state) => state.setFavoriteItemsCount
+  );
+  const setRecentItemsCount = useCountStore(
+    (state) => state.setRecentItemsCount
+  );
+  const setTrashedItemsCount = useCountStore(
+    (state) => state.setTrashedItemsCount
+  );
+  const setStorageUsed = useCountStore((state) => state.setStorageUsed);
+  const setStorageLimit = useCountStore((state) => state.setStorageLimit);
+  const setRootFolderCount = useCountStore((state) => state.setRootFolderCount);
+
   const navigate = useNavigate();
   const form = useForm({
     resolver: zodResolver(registerSchema),
@@ -40,8 +56,15 @@ export default function RegisterForm() {
     console.log("Register data:", values);
     let res = await register(values);
     setUser(res.user);
+    setImportantItemsCount(res.user.importantItemsCount || 0);
+    setFavoriteItemsCount(res.user.favoriteItemsCount || 0);
+    setRecentItemsCount(res.user.recentItemsCount || 0);
+    setTrashedItemsCount(res.user.trashedItemsCount || 0);
+    setStorageUsed(res.storageUsed || 0);
+    setStorageLimit(res.storageLimit || 0);
+    setRootFolderCount(res.user.rootFolderCount || 0);
     console.log(res);
-    toast("register success");
+    toast.success("register success");
     navigate("/");
   };
 

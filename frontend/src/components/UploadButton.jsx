@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
+import CreateFolderForm from "../components/CreateFolderForm";
 import { Upload, ChevronDown, FileUp, FolderPlus } from "lucide-react";
 import {
   DropdownMenu,
@@ -14,6 +15,7 @@ import { UploadModal } from "@/sections/UploadModal";
 
 const UploadButton = () => {
   const [uploadModal, setUploadModal] = useState(false);
+  const [createFolderFormOpen, setCreateFolderFormOpen] = useState(false);
   return (
     <div className="relative">
       <DropdownMenu>
@@ -36,7 +38,11 @@ const UploadButton = () => {
             </Button>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Button variant="ghost" className="w-full justify-start">
+            <Button
+              onClick={() => setCreateFolderFormOpen(true)}
+              variant="ghost"
+              className="w-full justify-start"
+            >
               <FolderPlus size={16} className="mr-2" />
               New Folder
             </Button>
@@ -44,6 +50,9 @@ const UploadButton = () => {
         </DropdownMenuContent>
       </DropdownMenu>
       {uploadModal && <UploadModal onClose={() => setUploadModal(false)} />}
+      {createFolderFormOpen && (
+        <CreateFolderForm setCreateFolderFormOpen={setCreateFolderFormOpen} />
+      )}
     </div>
   );
 };

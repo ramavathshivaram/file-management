@@ -11,9 +11,17 @@ import {
 } from "./ui/dropdown-menu"; // ✅ use shadcn wrapper
 import { ChevronDown } from "lucide-react";
 import useUserStore from "@/store/userStore";
+import { useNavigate } from "react-router-dom";
 
 const UserMenu = () => {
+  const navigate = useNavigate();
   const user = useUserStore((state) => state.user);
+  const clearUser = useUserStore((state) => state.clearUser);
+
+  if (!user) {
+    return null; // or a loading spinner
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -23,8 +31,13 @@ const UserMenu = () => {
           className="flex items-center gap-2 p-2"
         >
           <Avatar className="w-8 h-8">
-            <AvatarImage src="/placeholder-avatar.jpg" alt="User Avatar" />
-            <AvatarFallback>{user.userName[0].toUpperCase()}</AvatarFallback>
+            <AvatarImage
+              src={user.avatar || "/placeholder-avatar.jpg"}
+              alt="User Avatar"
+            />
+            <AvatarFallback>
+              {user.userName?.[0]?.toUpperCase() || "U"}
+            </AvatarFallback>
           </Avatar>
           <ChevronDown size={16} />
         </Button>
@@ -38,9 +51,24 @@ const UserMenu = () => {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Profile</DropdownMenuItem>
-        <DropdownMenuItem>Settings</DropdownMenuItem>
-        <DropdownMenuItem className="text-red-600">Sign Out</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => navigate("/profile")}>
+          Profile
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => navigate("/settings")}>
+          Settings
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => {
+            clearUser();
+            localStorage.removeItem("token");
+            localStorage.removeItem("user-storage");
+            localStorage.removeItem("folder-store");
+            navigate("/login-or-register");
+          }}
+          className="text-red-600"
+        >
+          Sign Out
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
