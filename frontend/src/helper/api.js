@@ -63,15 +63,15 @@ const getFolderContent = async (folderId) => {
   return res.data;
 };
 
-const deleteFolder = async (folderId) => {
-  console.log("📂 Delete folder request:", folderId);
-  const res = await API.delete(`/folder/${folderId}`);
+const deleteFolder = async (folder) => {
+  console.log("📂 Delete folder request:", folder);
+  const res = await API.delete(`/folders/${folder.folderId}`, folder);
   console.log("✅ Folder content response:", res.data);
   return res.data;
 };
-const renameFolder = async (folderId) => {
-  console.log("📂 Rename folder request:", folderId);
-  const res = await API.patch(`/folder/rename/${folderId}`);
+const renameFolder = async (folder) => {
+  console.log("📂 Rename folder request:", folder);
+  const res = await API.patch(`/folders/rename/${folder.folderId}`, folder);
   console.log("✅ Folder content response:", res);
   return res;
 };

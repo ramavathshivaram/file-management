@@ -12,6 +12,7 @@ import Tags from "./pages/Tags";
 import Important from "./pages/Important";
 import Trash from "./pages/Trash";
 import Setting from "./pages/Setting";
+import ForgotPassword from "./pages/ForgotPassword";
 
 const App = () => {
   return (
@@ -29,10 +30,11 @@ const App = () => {
             <Route path="/setting" element={<Setting />} />
           </Route>
           <Route path="/login-or-register" element={<LoginOrRegister />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="*" element={<div>404 Not Found</div>} />
         </Routes>
       </BrowserRouter>
-      <Toaster position="top-right"/>
+      <Toaster position="top-right" />
     </div>
   );
 };

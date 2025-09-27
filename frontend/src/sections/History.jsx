@@ -10,15 +10,17 @@ import {
 import { Button } from "@/components/ui/button";
 import UploadButton from "@/components/UploadButton";
 import useFolderStore from "@/store/folderStore";
+import useSelectStore from "@/store/selectStore";
 
 const History = () => {
   const pathHistory = useFolderStore((state) => state.pathHistory);
+  const selectedItems = useSelectStore((state) => state.selectedItems);
   const removeAfterFolderId = useFolderStore(
     (state) => state.removeAfterFolderId
   );
-  console.log("history path",pathHistory)
+  console.log("history path", pathHistory);
   return (
-    <div className="w-full flex items-center justify-between border-b p-2">
+    <div className="w-full flex items-center justify-between px-1">
       <Breadcrumb>
         <BreadcrumbList>
           {pathHistory.length > 0 ? (
@@ -27,6 +29,7 @@ const History = () => {
                 <BreadcrumbItem
                   onClick={() => removeAfterFolderId(item.id)}
                   className="hover:text-gray-950 cursor-pointer"
+                  disable={selectedItems.length === 0}
                 >
                   <BreadcrumbLink>{item.name}</BreadcrumbLink>
                 </BreadcrumbItem>

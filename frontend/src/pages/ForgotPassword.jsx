@@ -1,94 +1,118 @@
 import React from "react";
-import { login } from "../utils/api";
 import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { login } from "../helper/api";
+import useUserStore from "@/store/userStore";
+import useCountStore from "@/store/countStore";
 
-const ForgotPassword = () => {
+// Zod validation schema
+const loginSchema = z.object({
+  email: z.string().email("Enter a valid email"),
+  password: z.string().min(1, "Password is required"),
+});
+
+export default function ForgotPassword() {
+  const setImportantItemsCount = useCountStore(
+    (state) => state.setImportantItemsCount
+  );
+  const setFavoriteItemsCount = useCountStore(
+    (state) => state.setFavoriteItemsCount
+  );
+  const setRecentItemsCount = useCountStore(
+    (state) => state.setRecentItemsCount
+  );
+  const setTrashedItemsCount = useCountStore(
+    (state) => state.setTrashedItemsCount
+  );
+  const setStorageUsed = useCountStore((state) => state.setStorageUsed);
+  const setStorageLimit = useCountStore((state) => state.setStorageLimit);
+  const setRootFolderCount = useCountStore((state) => state.setRootFolderCount);
+
+  const setUser = useUserStore((state) => state.setUser);
   const navigate = useNavigate();
-  const {
-    handleSubmit,
-    register,
-    formState: { errors, isSubmitting },
-  } = useForm();
+  const form = useForm({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
 
-  const onSubmit = async (data) => {
-    const response = await login(data);
-    console.log(response);
-    let token = response.token;
-    localStorage.setItem("token", token);
-    navigate("/");
+  const onSubmit = async (values) => {
+    try {
+      const response = await login(values);
+      console.log(response.user);
+      toast.success("Login successful");
+      setUser(response.user);
+      setImportantItemsCount(response.user.importantItemsCount || 0);
+      setFavoriteItemsCount(response.user.favoriteItemsCount || 0);
+      setRecentItemsCount(response.user.recentItemsCount || 0);
+      setTrashedItemsCount(response.user.trashedItemsCount || 0);
+      setStorageUsed(response.storageUsed || 0);
+      setStorageLimit(response.storageLimit || 0);
+      setRootFolderCount(response.user.rootFolderCount || 0);
+      navigate("/");
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
+
   return (
-    <div className="flex flex-col items-center justify-center h-full">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-4 border p-4 rounded-xl min-w-[350px]"
-      >
-        <h1 className="underline text-2xl text-center uppercase">login</h1>
-
-        <div className="relative flex flex-col">
-          <input
-            type="email"
-            placeholder=" "
-            className="border outline-none p-2 peer rounded-md"
-            {...register("email", {
-              required: "Email is required",
-            })}
-          />
-          <label
-            className="absolute left-3 -top-[7px] transition-all duration-200 text-xs
-                 peer-placeholder-shown:text-lg  peer-placeholder-shown:top-2 peer-focus:-top-[7px]  peer-focus:left-3 peer-focus:text-xs bg-white px-1"
+    <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center border w-[300px] p-5 rounded-2xl">
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="flex flex-col gap-4 w-full"
           >
-            Email
-          </label>
-          {errors.email && (
-            <span className="text-red-600 text-sm mt-1">
-              {errors.email.message}
-            </span>
-          )}
-        </div>
-        <div className="relative flex flex-col">
-          <input
-            type="password"
-            placeholder=" "
-            className="border outline-none p-2 peer rounded-md"
-            {...register("password", {
-              required: "Password is required",
-            })}
-          />
-          <label
-            className="absolute left-3 -top-[7px] transition-all duration-200 text-xs
-                 peer-placeholder-shown:text-lg  peer-placeholder-shown:top-2 peer-focus:-top-[7px]  peer-focus:left-3 peer-focus:text-xs bg-white px-1"
-          >
-            Password
-          </label>
-          {errors.password && (
-            <span className="text-red-600 text-sm mt-1">
-              {errors.password.message}
-            </span>
-          )}
-        </div>
+            <h1 className="underline text-2xl text-center uppercase">
+              Forgot Password
+            </h1>
 
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="btn disabled:opacity-50"
-        >
-          {isSubmitting ? "Logining..." : "Login"}
-        </button>
+            {/* Email */}
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter email" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting
+                ? "Logging in..."
+                : "Change password"}
+            </Button>
 
-        <p className="text-sm text-center">
-          Don't have an account?{" "}
-          <span
-            onClick={() => navigate("/register")}
-            className="text-blue-600 cursor-pointer"
-          >
-            Register
-          </span>
-        </p>
-      </form>
+            <p className="text-sm text-center">
+              <span
+                onClick={() => navigate("/forgot-password")}
+                className="text-blue-600 cursor-pointer hover:underline"
+              >
+                Register Or Login
+              </span>
+            </p>
+          </form>
+        </Form>
+      </div>
     </div>
   );
-};
-
-export default ForgotPassword;
+}

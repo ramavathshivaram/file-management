@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   Card,
   CardContent,
@@ -17,6 +17,16 @@ import {
 } from "lucide-react";
 import Player from "@/pages/Player";
 import useFolderStore from "@/store/folderStore";
+import useSelectStore from "@/store/selectStore";
+import { toast } from "sonner";
+
+const iconMap = {
+  folder: <Folder className="w-4/5 h-4/5 text-gray-600" strokeWidth={1} />,
+  file: <File className="w-4/5 h-4/5 text-gray-600" strokeWidth={1} />,
+  img: <Image className="w-4/5 h-4/5 text-gray-600" strokeWidth={1} />,
+  video: <Video className="w-4/5 h-4/5 text-gray-600" strokeWidth={1} />,
+  audio: <AudioLines className="w-4/5 h-4/5 text-gray-600" strokeWidth={1} />,
+};
 
 const CardComponent = ({
   name,
@@ -29,26 +39,51 @@ const CardComponent = ({
   const addCurrentFolderId = useFolderStore(
     (state) => state.addCurrentFolderId
   );
+  const addSelectedItem = useSelectStore((state) => state.addSelectedItem);
+  const removeSelectedItem = useSelectStore(
+    (state) => state.removeSelectedItem
+  );
+  const selectedItems = useSelectStore((state) => state.selectedItems);
+  const isSelected = selectedItems.includes(folderId);
 
-  const handleClick = () => {
-    if (type === "folder") {
-      addCurrentFolderId(folderId);
-    } else {
-      setIsModalOpen(true);
+  const clickTimeout = useRef(null);
+
+  // Single click: select/unselect
+  const handleSingleClick = () => {
+    if (isSelected) removeSelectedItem(folderId);
+    else addSelectedItem(folderId);
+  };
+
+  // Double click: open folder or file
+  const handleDoubleClick = () => {
+    if (selectedItems.length === 0) {
+      if (type === "folder") {
+        addCurrentFolderId(folderId);
+      } else {
+        setIsModalOpen(true);
+      }
     }
   };
 
-  const iconMap = {
-    folder: <Folder className="w-4/5 h-4/5 text-gray-600" strokeWidth={1} />,
-    file: <File className="w-4/5 h-4/5 text-gray-600" strokeWidth={1} />,
-    img: <Image className="w-4/5 h-4/5 text-gray-600" strokeWidth={1} />,
-    video: <Video className="w-4/5 h-4/5 text-gray-600" strokeWidth={1} />,
-    audio: <AudioLines className="w-4/5 h-4/5 text-gray-600" strokeWidth={1} />,
+  // Handle click vs double-click
+  const handleClick = () => {
+    if (clickTimeout.current) {
+      clearTimeout(clickTimeout.current);
+      clickTimeout.current = null;
+      handleDoubleClick();
+    } else {
+      clickTimeout.current = setTimeout(() => {
+        handleSingleClick();
+        clickTimeout.current = null;
+      }, 250); // to activate dbl click it tooks morethan 200ms
+    }
   };
 
   return (
     <Card
-      className="w-full aspect-square gap-0 hover:shadow-lg transition-shadow group/card"
+      className={`w-full aspect-square gap-0 hover:shadow-lg transition-shadow group/card cursor-pointer ${
+        isSelected ? "bg-blue-200 border-blue-400 border-2" : ""
+      }`}
       onClick={handleClick}
     >
       <CardHeader className="flex justify-end group-hover/card:opacity-70 opacity-0 -mt-4">
