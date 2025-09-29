@@ -86,7 +86,7 @@ const searchApi = async (query) => {
   console.log("📂 move query request:", query);
   const res = await API.get(`/users/search?q=${query}`);
   console.log("✅ Folder content response:", res);
-  return res.data;
+  return res.data.results;
 };
 
 export {

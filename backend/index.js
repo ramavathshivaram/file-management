@@ -20,7 +20,7 @@ app.post("/api/users/login", loginUser);
 //MIDDLEWARE FOR PROTECTED ROUTES
 app.use(verifyJWT);
 
-//app.use("/api/users", require("./routes/userRoutes"));
+app.use("/api/users", require("./routes/userRoutes"));
 
 //FOLER ROUTES
 app.use("/api/folders", folderRoutes);

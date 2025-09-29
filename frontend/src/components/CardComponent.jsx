@@ -73,9 +73,9 @@ const CardComponent = ({
       whileTap={{ scale: 0.95 }}
       whileDrag={{ scale: 0.9 }}
       drag
-      // dragConstraints={{ top: 0, bottom: 0, left: 0, right: 0 }}
-      dragElastic={0.1}
-      dragTransition={{ bounceStiffness: 500, bounceDamping: 20 }}
+       // dragConstraints={{ top: 0, bottom: 0, left: 0, right: 0 }}
+      //  dragElastic={0.1}
+      // dragTransition={{ bounceStiffness: 500, bounceDamping: 20 }}
     >
       <div className="flex flex-col items-center justify-center ">
         <Icon className="w-4/5 h-4/5 text-gray-600" strokeWidth={1} />

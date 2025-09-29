@@ -14,9 +14,9 @@ const userSchema = new Schema(
     isActive: { type: Boolean, default: true },
     allItemsName: [
       {
-        itemId: { type: mongoDB.Schema.Types.ObjectId },
-        name: String,
-        type: String,
+        itemId: { type: mongoDB.Schema.Types.ObjectId, ref: "Folder" },
+        name: { type: String, required: true },
+        type: { type: String, enum: ["folder", "file"], required: true },
       },
     ],
     rootFolderId: {

@@ -15,11 +15,13 @@ const Home = () => {
     (state) => state.addCurrentFolderId
   );
   const selectedItems = useSelectStore((state) => state.selectedItems);
-  // const clearAllSelectedItems = useSelectStore(
-  //   (state) => state.clearAllSelectedItems
-  // );
+  const clearAllSelectedItems = useSelectStore(
+    (state) => state.clearAllSelectedItems
+  );
 
-  // clearAllSelectedItems();
+  React.useEffect(() => {
+    clearAllSelectedItems();
+  }, [clearAllSelectedItems]);
 
   if (!user && !token) {
     return <Navigate to="/login-or-register" />;

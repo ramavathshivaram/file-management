@@ -138,7 +138,8 @@ const updateuser = async (req, res) => {};
 const searchQuery = async (req, res) => {
   try {
     const userId = req.user.userId;
-    const { q } = req.query;
+    const q  = req.query.q;
+    console.log("q   ",q)
 
     if (!q) {
       return res
@@ -147,10 +148,18 @@ const searchQuery = async (req, res) => {
     }
 
     // Find user and only project matching items in allItemsName
-    const user = await User.findOne(
-      { _id: userId, "allItemsName.name": { $regex: q, $options: "i" } },
-      { "allItemsName.$": 1 } // only return the matched element
-    );
+    const user = await User.findById(userId, {
+      allItemsName: {
+        $filter: {
+          input: "$allItemsName",
+          as: "item",
+          cond: {
+            $regexMatch: { input: "$$item.name", regex: q, options: "i" },
+          },
+        },
+      },
+    });
+
 
     if (!user) {
       return res.status(404).json({ message: "No matching items found" });

@@ -49,7 +49,7 @@ const createFolder = async (req, res) => {
       {
         $push: {
           allItemsName: {
-            id: newFolder._id,
+            itemId: newFolder._id,
             name: newFolder.folderName,
             type: "folder",
           },
@@ -148,7 +148,7 @@ const renameFolder = async (req, res) => {
     }
 
     await User.findOneAndUpdate(
-      { _id: ownerId, "allItemsName.id": folderId },
+      { _id: ownerId, "allItemsName.itemId": folderId },
       { $set: { "allItemsName.$.name": newFolderName } },
       { session }
     );
@@ -236,7 +236,7 @@ const deleteFolder = async (req, res) => {
       {
         $pull: {
           allItemsName: {
-            id: folderId,
+            itemId: folderId,
           },
         },
       },

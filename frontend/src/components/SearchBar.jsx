@@ -5,6 +5,7 @@ import { Input } from "./ui/input";
 import { Card } from "./ui/card";
 import { Folder, File, Image, Video, AudioLines } from "lucide-react";
 import { searchApi } from "@/helper/api";
+import useFolderStore from "@/store/folderStore";
 
 const SearchBar = () => {
   const [searchFocused, setSearchFocused] = useState(false);
@@ -13,6 +14,9 @@ const SearchBar = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [open, setOpen] = useState(false);
+  const addCurrentFolderId = useFolderStore(
+    (state) => state.addCurrentFolderId
+  );
 
   const iconMap = {
     folder: <Folder className="w-4/5 h-4/5 text-gray-600" strokeWidth={1} />,
@@ -30,12 +34,11 @@ const SearchBar = () => {
       setLoading(false);
       return;
     }
-    console.log("query", searchQuery);
 
     setLoading(true);
     setError(null);
 
-    const delayDebounceFn = setTimeout(async() => {
+    const delayDebounceFn = setTimeout(async () => {
       try {
         const results = await searchApi(searchQuery);
         setData(results);
@@ -115,10 +118,15 @@ const SearchBar = () => {
                   >
                     {data.map((item) => (
                       <li
-                        key={item.id}
+                        key={item.itemId}
                         role="option"
                         className="flex items-center gap-3 p-2 rounded hover:bg-accent cursor-pointer"
                         onMouseDown={() => {
+                          if (item.type == "folder") {
+                            addCurrentFolderId(item.itemId);
+                            setOpen(false);
+                            return;
+                          }
                           setSearchQuery(item.name); // set only the name
                           setOpen(false);
                         }}
