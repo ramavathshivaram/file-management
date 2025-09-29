@@ -72,13 +72,7 @@ const registerUser = async (req, res) => {
         userName: newUser.userName,
         email: newUser.email,
         avatar: newUser.avatar,
-        importantItemsCount: newUser.importantItemsCount,
-        favoriteItemsCount: newUser.favoriteItemsCount,
-        recentItemsCount: newUser.recentItemsCount,
-        trashedItemsCount: newUser.trashedItemsCount,
-        rootFolderID: newUser.rootFolderId,
-        storageUsed: newUser.storageUsed,
-        storageLimit: newUser.storageLimit,
+        rootFolderId: newUser.rootFolderId,
       },
       token,
     });
@@ -125,14 +119,7 @@ const loginUser = async (req, res) => {
         userName: user.userName,
         email: user.email,
         avatar: user.avatar,
-        importantItemsCount: user.importantItemsCount,
-        favoriteItemsCount: user.favoriteItemsCount,
-        recentItemsCount: user.recentItemsCount,
-        trashedItemsCount: user.trashedItemsCount,
-        rootFolderCount: user.rootFolderCount,
         rootFolderId: user.rootFolderId,
-        storageUsed: user.storageUsed,
-        storageLimit: user.storageLimit,
       },
       token,
     });
@@ -148,16 +135,37 @@ const loginUser = async (req, res) => {
 
 const updateuser = async (req, res) => {};
 
-const sarchResult = async (req, res) => {
-   try {
-     //todo
-   } catch (error) {
-     console.log(err);
-   }
-}
+const searchQuery = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const { q } = req.query;
+
+    if (!q) {
+      return res
+        .status(400)
+        .json({ message: "Query parameter 'q' is required" });
+    }
+
+    // Find user and only project matching items in allItemsName
+    const user = await User.findOne(
+      { _id: userId, "allItemsName.name": { $regex: q, $options: "i" } },
+      { "allItemsName.$": 1 } // only return the matched element
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: "No matching items found" });
+    }
+
+    res.json({ results: user.allItemsName });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
 
 module.exports = {
   registerUser,
   loginUser,
   updateuser,
+  searchQuery,
 };

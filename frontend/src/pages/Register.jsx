@@ -15,7 +15,6 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import useUserStore from "@/store/userStore";
-import useCountStore from "@/store/countStore";
 
 // ✅ Validation Schema
 const registerSchema = z.object({
@@ -26,21 +25,6 @@ const registerSchema = z.object({
 
 export default function RegisterForm() {
   const setUser = useUserStore((state) => state.setUser);
-  const setImportantItemsCount = useCountStore(
-    (state) => state.setImportantItemsCount
-  );
-  const setFavoriteItemsCount = useCountStore(
-    (state) => state.setFavoriteItemsCount
-  );
-  const setRecentItemsCount = useCountStore(
-    (state) => state.setRecentItemsCount
-  );
-  const setTrashedItemsCount = useCountStore(
-    (state) => state.setTrashedItemsCount
-  );
-  const setStorageUsed = useCountStore((state) => state.setStorageUsed);
-  const setStorageLimit = useCountStore((state) => state.setStorageLimit);
-  const setRootFolderCount = useCountStore((state) => state.setRootFolderCount);
 
   const navigate = useNavigate();
   const form = useForm({
@@ -63,13 +47,6 @@ export default function RegisterForm() {
     }
 
     setUser(user);
-    setImportantItemsCount(user.importantItemsCount ?? 0);
-    setFavoriteItemsCount(user.favoriteItemsCount ?? 0);
-    setRecentItemsCount(user.recentItemsCount ?? 0);
-    setTrashedItemsCount(user.trashedItemsCount ?? 0);
-    setStorageUsed(user.storageUsed ?? 0);
-    setStorageLimit(user.storageLimit ?? 0);
-    setRootFolderCount(user.rootFolderCount ?? 0);
     toast.success("register success");
     navigate("/");
   };

@@ -11,11 +11,12 @@ const createFolder = async (req, res) => {
     const userId = req.user.userId;
 
     if (!folderName) {
+      await session.abortTransaction();
+      session.endSession();
       return res
         .status(400)
         .json({ message: "Folder name is required", status: false });
     }
-
     // 1️⃣ Create the new folder
     const newFolder = new Folder({
       folderName: folderName,
@@ -35,15 +36,27 @@ const createFolder = async (req, res) => {
             subFolders: {
               folderId: newFolder._id,
               folderName: newFolder.folderName,
-              folderType: newFolder.folderType,
-              isFavorite: newFolder.isFavorite,
-              isImportant: newFolder.isImportant,
+              folderType: "folder",
             },
           },
         },
         { session } // must pass session
       );
     }
+
+    await User.findByIdAndUpdate(
+      userId,
+      {
+        $push: {
+          allItemsName: {
+            id: newFolder._id,
+            name: newFolder.folderName,
+            type: "folder",
+          },
+        },
+      },
+      { session }
+    );
 
     // 3️⃣ Commit transaction
     await session.commitTransaction();
@@ -134,6 +147,12 @@ const renameFolder = async (req, res) => {
       );
     }
 
+    await User.findOneAndUpdate(
+      { _id: ownerId, "allItemsName.id": folderId },
+      { $set: { "allItemsName.$.name": newFolderName } },
+      { session }
+    );
+
     // Commit transaction
     await session.commitTransaction();
     session.endSession();
@@ -166,6 +185,7 @@ const deleteFolder = async (req, res) => {
 
     const { parentFolderId } = await Folder.findById(folderId, {
       parentFolderId: true,
+      _id: 0,
     });
 
     // Recursive helper to delete folder + children
@@ -210,6 +230,18 @@ const deleteFolder = async (req, res) => {
         { new: true, session }
       );
     }
+
+    await User.findByIdAndUpdate(
+      ownerId,
+      {
+        $pull: {
+          allItemsName: {
+            id: folderId,
+          },
+        },
+      },
+      { session }
+    );
 
     // ✅ Commit transaction
     await session.commitTransaction();
@@ -270,8 +302,6 @@ const moveFolder = async (req, res) => {
             folderId: folder._id,
             folderName: folder.folderName,
             folderType: folder.folderType,
-            isFavorite: folder.isFavorite,
-            isImportant: folder.isImportant,
           },
         },
       },
@@ -300,7 +330,6 @@ const moveFolder = async (req, res) => {
     });
   }
 };
-
 
 module.exports = {
   createFolder,

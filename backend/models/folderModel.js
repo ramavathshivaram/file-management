@@ -14,14 +14,6 @@ const folderSchema = new Schema({
         type: String,
         default: "folder",
       },
-      isFavorite: {
-        type: Boolean,
-        default: false,
-      },
-      isImportant: {
-        type: Boolean,
-        default: false,
-      },
     },
   ],
   files: [
@@ -32,8 +24,6 @@ const folderSchema = new Schema({
         type: String,
         enum: ["img", "video", "audio", "document", "other"],
       },
-      isImportant: { type: Boolean, default: false },
-      isFavorite: { type: Boolean, default: false },
       uploadedAt: { type: Date, default: Date.now },
       width: { type: Number },
       height: { type: Number },
@@ -46,14 +36,6 @@ const folderSchema = new Schema({
   colorLabel: { type: String },
   description: { type: String },
   versionHistory: [Schema.Types.Mixed],
-  isFavorite: {
-    type: Boolean,
-    default: false,
-  },
-  isImportant: {
-    type: Boolean,
-    default: false,
-  },
 });
 
 module.exports = mongoDB.model("Folder", folderSchema);

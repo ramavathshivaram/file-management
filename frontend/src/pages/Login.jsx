@@ -16,7 +16,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { login } from "../helper/api";
 import useUserStore from "@/store/userStore";
-import useCountStore from "@/store/countStore";
 
 // Zod validation schema
 const loginSchema = z.object({
@@ -25,22 +24,6 @@ const loginSchema = z.object({
 });
 
 export default function LoginForm() {
-  const setImportantItemsCount = useCountStore(
-    (state) => state.setImportantItemsCount
-  );
-  const setFavoriteItemsCount = useCountStore(
-    (state) => state.setFavoriteItemsCount
-  );
-  const setRecentItemsCount = useCountStore(
-    (state) => state.setRecentItemsCount
-  );
-  const setTrashedItemsCount = useCountStore(
-    (state) => state.setTrashedItemsCount
-  );
-  const setStorageUsed = useCountStore((state) => state.setStorageUsed);
-  const setStorageLimit = useCountStore((state) => state.setStorageLimit);
-  const setRootFolderCount = useCountStore((state) => state.setRootFolderCount);
-
   const setUser = useUserStore((state) => state.setUser);
   const navigate = useNavigate();
   const form = useForm({
@@ -57,13 +40,6 @@ export default function LoginForm() {
       console.log(response.user);
       toast.success("Login successful");
       setUser(response.user);
-      setImportantItemsCount(response.user.importantItemsCount || 0);
-      setFavoriteItemsCount(response.user.favoriteItemsCount || 0);
-      setRecentItemsCount(response.user.recentItemsCount || 0);
-      setTrashedItemsCount(response.user.trashedItemsCount || 0);
-      setStorageUsed(response.storageUsed || 0);
-      setStorageLimit(response.storageLimit || 0);
-      setRootFolderCount(response.user.rootFolderCount || 0);
       navigate("/");
     } catch (error) {
       toast.error(error.message);

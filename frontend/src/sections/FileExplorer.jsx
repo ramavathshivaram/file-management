@@ -29,6 +29,11 @@ const FileExplorer = () => {
     keepPreviousData: true,
   });
   const handleDragEnd = async () => {
+    if (dragFolderId == dragTargetId) {
+      setDragFolderId(null);
+      setDragTargetId(null);
+      return;
+    }
     const moveFolderObj = {
       folderId: dragFolderId,
       parentFolderId: currentFolderId,
@@ -36,10 +41,12 @@ const FileExplorer = () => {
     };
     await moveFolder(moveFolderObj);
     queryClient.invalidateQueries(["folders", currentFolderId]);
+    setDragFolderId(null);
+    setDragTargetId(null);
   };
 
   return (
-    <div className="p-2 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 overflow-y-auto overflow-x-none">
+    <div className="p-2 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 overflow-y-auto overflow-x-none h-full">
       {isLoading || !data?.folder ? (
         [1, 1, 1, 1, 1].map((ele, idx) => <CardComponentSkeleton key={idx} />)
       ) : data.folder.subFolders?.length === 0 ? (
@@ -54,6 +61,7 @@ const FileExplorer = () => {
             setDragFolderId={setDragFolderId}
             setDragTargetId={setDragTargetId}
             handleDragEnd={handleDragEnd}
+            dragFolderId={dragFolderId}
           />
         ))
       )}

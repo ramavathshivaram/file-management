@@ -11,7 +11,7 @@ export function useSelectable(folderId) {
     if (isSelected) remove(folderId);
     else add(folderId);
   };
-  const isPathChangeble = selectedItems.length === 0;
+  const isPathChangeable = selectedItems.length !== 0;
 
-  return { isSelected, toggleSelect, isPathChangeble };
+  return { isSelected, toggleSelect, isPathChangeable };
 }

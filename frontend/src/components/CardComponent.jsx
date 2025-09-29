@@ -1,40 +1,20 @@
-import React, { useState, useRef, useCallback } from "react";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Folder,
-  File,
-  Image,
-  Video,
-  AudioLines,
-  Star,
-  Component,
-  Heart,
-  Paperclip,
-} from "lucide-react";
+import React, { useState, useRef, useCallback, useMemo } from "react";
+import { Folder, File, Image, Video, AudioLines } from "lucide-react";
 import Player from "@/pages/Player";
 import useFolderStore from "@/store/folderStore";
-import useSelectStore from "@/store/selectStore";
-import { toast } from "sonner";
 import { useSelectable } from "@/hooks/useSelectable";
+import { motion } from "framer-motion";
 
-const iconMap = {
-  folder: <Folder className="w-4/5 h-4/5 text-gray-600" strokeWidth={1} />,
-  file: <File className="w-4/5 h-4/5 text-gray-600" strokeWidth={1} />,
-  img: <Image className="w-4/5 h-4/5 text-gray-600" strokeWidth={1} />,
-  video: <Video className="w-4/5 h-4/5 text-gray-600" strokeWidth={1} />,
-  audio: <AudioLines className="w-4/5 h-4/5 text-gray-600" strokeWidth={1} />,
+const iconComponents = {
+  folder: Folder,
+  file: File,
+  img: Image,
+  video: Video,
+  audio: AudioLines,
 };
 
 const CardComponent = ({
   folderName,
-  isFavorite = false,
-  isImportant = false,
   type = "folder",
   folderId,
   setDragFolderId,
@@ -45,19 +25,21 @@ const CardComponent = ({
   const addCurrentFolderId = useFolderStore(
     (state) => state.addCurrentFolderId
   );
-  const { isSelected, toggleSelect, isPathChangeble } = useSelectable(folderId);
+  const { isSelected, toggleSelect, isPathChangeable } =
+    useSelectable(folderId);
+  const Icon = useMemo(() => iconComponents[type] || Folder, [type]);
 
   const clickTimeout = useRef(null);
 
   const handleDoubleClick = useCallback(() => {
-    if (!isPathChangeble) return;
+    if (isPathChangeable) return;
 
     if (type === "folder") {
       addCurrentFolderId(folderId);
     } else {
       setIsModalOpen(true);
     }
-  }, [isPathChangeble, type, folderId, addCurrentFolderId, setIsModalOpen]);
+  }, [isPathChangeable, type, folderId, addCurrentFolderId, setIsModalOpen]);
 
   // Handle click vs double-click
   const handleClick = () => {
@@ -74,42 +56,32 @@ const CardComponent = ({
   };
 
   return (
-    <Card
-      className={`w-full bg-white aspect-square gap-0 hover:shadow-lg transition-shadow group/card cursor-pointer p-0 ${
-        isSelected ? "bg-blue-200 border-blue-400 border-2" : ""
+    <motion.div
+      className={`border p-2 rounded-lg w-full aspect-square hover:shadow-md transition-shadow group/card cursor-pointer ${
+        isSelected ? "bg-blue-200/70 border-blue-400 border-2" : ""
       }`}
       onClick={handleClick}
       draggable={true}
-      onDrag={() => setDragFolderId(folderId)}
+      onDragStart={() => setDragFolderId(folderId)}
       onDragOver={() => setDragTargetId(folderId)}
       onDragEnd={handleDragEnd}
+      // animation
+      initial={{ scale: 0 }}
+      animate={{ scale: 1 }}
+      exit={{ scale: 0 }}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      whileDrag={{ scale: 0.9 }}
+      drag
+      // dragConstraints={{ top: 0, bottom: 0, left: 0, right: 0 }}
+      dragElastic={0.1}
+      dragTransition={{ bounceStiffness: 500, bounceDamping: 20 }}
     >
-      <CardHeader className="flex justify-end group-hover/card:opacity-100 opacity-0 mt-2 px-2">
-        <Paperclip
-          className={
-            isImportant
-              ? "text-blue-600 fill-blue-600 transition-colors size-5"
-              : "text-gray-500 hover:text-blue-600 transition-colors size-5"
-          }
-        />
-        <Heart
-          className={
-            isFavorite
-              ? "text-red-500  fill-red-600 transition-colors size-5"
-              : "text-gray-500 hover:text-red-600 transition-colors size-5"
-          }
-        />
-      </CardHeader>
+      <div className="flex flex-col items-center justify-center ">
+        <Icon className="w-4/5 h-4/5 text-gray-600" strokeWidth={1} />
+      </div>
 
-      <CardContent className="flex flex-col items-center justify-center -mt-5 p-0">
-        {iconMap[type] || (
-          <Folder className="size-5 text-gray-600 m-0 p-0" strokeWidth={1} />
-        )}
-      </CardContent>
-
-      <CardFooter className="text-center mb-2 -mt-3">
-        <CardTitle className="truncate">{folderName}</CardTitle>
-      </CardFooter>
+      <h1 className="truncate text-lg font-medium">{folderName}</h1>
 
       {isModalOpen && (
         <Player
@@ -118,7 +90,7 @@ const CardComponent = ({
           setModel={setIsModalOpen}
         />
       )}
-    </Card>
+    </motion.div>
   );
 };
 

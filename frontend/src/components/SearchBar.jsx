@@ -4,6 +4,7 @@ import { Search, X } from "lucide-react";
 import { Input } from "./ui/input";
 import { Card } from "./ui/card";
 import { Folder, File, Image, Video, AudioLines } from "lucide-react";
+import { searchApi } from "@/helper/api";
 
 const SearchBar = () => {
   const [searchFocused, setSearchFocused] = useState(false);
@@ -20,18 +21,6 @@ const SearchBar = () => {
     video: <Video className="w-4/5 h-4/5 text-gray-600" strokeWidth={1} />,
     audio: <AudioLines className="w-4/5 h-4/5 text-gray-600" strokeWidth={1} />,
   };
-  const dummy = [
-    { id: 1, name: "Work Projects", type: "folder" },
-    { id: 2, name: "Resume.docx", type: "file" },
-    { id: 3, name: "Vacation.png", type: "img" },
-    { id: 4, name: "Meeting.mp4", type: "video" },
-    { id: 5, name: "Podcast.mp3", type: "audio" },
-    { id: 6, name: "Designs", type: "folder" },
-    { id: 7, name: "Report.pdf", type: "file" },
-    { id: 8, name: "Family.jpg", type: "img" },
-    { id: 9, name: "Tutorial.mov", type: "video" },
-    { id: 10, name: "Song.wav", type: "audio" },
-  ];
 
   useEffect(() => {
     if (!searchQuery.trim()) {
@@ -41,15 +30,14 @@ const SearchBar = () => {
       setLoading(false);
       return;
     }
+    console.log("query", searchQuery);
 
     setLoading(true);
     setError(null);
 
-    const delayDebounceFn = setTimeout(() => {
+    const delayDebounceFn = setTimeout(async() => {
       try {
-        const results = dummy.filter((item) =>
-          item.name.toLowerCase().includes(searchQuery.toLowerCase())
-        );
+        const results = await searchApi(searchQuery);
         setData(results);
         setOpen(true);
         setLoading(false);
@@ -122,7 +110,7 @@ const SearchBar = () => {
                 )}
                 {!loading && !error && data.length > 0 && (
                   <ul
-                    className="space-y-1 max-h-70 overflow-y-auto"
+                    className="space-y-1 max-h-72 overflow-y-auto"
                     role="listbox"
                   >
                     {data.map((item) => (
