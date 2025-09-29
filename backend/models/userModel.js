@@ -16,22 +16,10 @@ const userSchema = new Schema(
     favoriteItemsCount: { type: Number, default: 0 },
     recentItemsCount: { type: Number, default: 0 },
     trashedItemsCount: { type: Number, default: 0 },
-    rootFolderCount: { type: Number, default: 0 },
     rootFolderId: {
       type: Schema.Types.ObjectId,
       ref: "Folder",
     },
-    allItems: [
-      {
-        id: { type: Schema.Types.ObjectId, required: true },
-        name: { type: String, required: true },
-        type: {
-          type: String,
-          enum: ["folder", "files", "img", "video", "audio"],
-          default: "folder",
-        },
-      },
-    ],
     sharedWithMe: [
       {
         senderId: { type: Schema.Types.ObjectId, required: true },

@@ -15,18 +15,19 @@ const Home = () => {
     (state) => state.addCurrentFolderId
   );
   const selectedItems = useSelectStore((state) => state.selectedItems);
-  // const clearAllSelectedItems = useSelectStore(
-  //   (state) => state.clearAllSelectedItems
-  // );
-  // clearAllSelectedItems()
+  const clearAllSelectedItems = useSelectStore(
+    (state) => state.clearAllSelectedItems
+  );
+  clearAllSelectedItems();
   if (!user && !token) {
     return <Navigate to="/login-or-register" />;
   }
   console.log(user);
   addCurrentFolderId(user.rootFolderId);
   return (
-    <div className="mx-auto w-screen max-w-[1200px] select-none">
-      <div className="flex h-15 items-center border-b">
+    <div className="mx-auto  w-screen max-w-[1300px] select-none h-[95vh]">
+      <div className="flex h-13 items-center border-b">
+        {/* fix this trigger */}
         <SidebarTrigger />
         {selectedItems.length === 0 ? <History /> : <Selected />}
       </div>

@@ -1,20 +1,19 @@
-import React from 'react'
-import { Outlet } from 'react-router-dom'
-import Navbar from '../sections/Navbar'
+import React from "react";
+import { Outlet } from "react-router-dom";
+import Navbar from "../sections/Navbar";
 import AppSidebar from "../sections/AppSidebar";
-import { SidebarProvider } from '@/components/ui/sidebar';
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 const RootLayout = () => {
   return (
-    <div>
+    <div className="w-screen">
       <Navbar />
-      <SidebarProvider className="h-screen">
+      <SidebarProvider>
         <AppSidebar />
         <Outlet />
       </SidebarProvider>
-      
     </div>
   );
-}
+};
 
-export default RootLayout
+export default RootLayout;

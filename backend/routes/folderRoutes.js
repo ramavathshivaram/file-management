@@ -5,6 +5,7 @@ const {
   getFolderById,
   deleteFolder,
   renameFolder,
+  moveFolder,
 } = require("../controllers/folderControllers");
 
 // Create a new folder
@@ -18,5 +19,7 @@ router.patch("/rename/:id", renameFolder);
 
 // Delete a folder by ID
 router.delete("/:id", deleteFolder);
+
+router.patch("/move", moveFolder);
 
 module.exports = router;

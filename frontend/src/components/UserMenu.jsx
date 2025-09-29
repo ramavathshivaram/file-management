@@ -19,8 +19,15 @@ const UserMenu = () => {
   const clearUser = useUserStore((state) => state.clearUser);
 
   if (!user) {
-    return null; // or a loading spinner
+    return null;
   }
+  const handelClick = () => {
+    clearUser();
+    localStorage.removeItem("token");
+    localStorage.removeItem("user-storage");
+    localStorage.removeItem("folder-store");
+    navigate("/login-or-register");
+  };
 
   return (
     <DropdownMenu>
@@ -57,16 +64,7 @@ const UserMenu = () => {
         <DropdownMenuItem onClick={() => navigate("/settings")}>
           Settings
         </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => {
-            clearUser();
-            localStorage.removeItem("token");
-            localStorage.removeItem("user-storage");
-            localStorage.removeItem("folder-store");
-            navigate("/login-or-register");
-          }}
-          className="text-red-600"
-        >
+        <DropdownMenuItem onClick={handelClick} className="text-red-600">
           Sign Out
         </DropdownMenuItem>
       </DropdownMenuContent>

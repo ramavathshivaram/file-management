@@ -15,6 +15,8 @@ import {
   Heart,
   Share2,
   Component,
+  FolderHeart,
+  Paperclip,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { Progress } from "@/components/ui/progress";
@@ -50,7 +52,7 @@ const AppSidebar = () => {
     },
     {
       title: "Favorites",
-      icon: <Heart className="size-5 mx-2" />,
+      icon: <FolderHeart className="size-5 mx-2" />,
       count: favoriteItemsCount,
       navigate: "/favorites",
     },
@@ -62,7 +64,7 @@ const AppSidebar = () => {
     },
     {
       title: "Important",
-      icon: <Component className="size-5 mx-2" />,
+      icon: <Paperclip className="size-5 mx-2" />,
       count: importantItemsCount,
       navigate: "/important",
     },
@@ -80,7 +82,7 @@ const AppSidebar = () => {
   ];
 
   return (
-    <Sidebar className="pt-14 z-1 bg-gradient-to-tl from-gray-50 to-gray-200">
+    <Sidebar className="z-1 bg-gradient-to-tl from-gray-50 to-gray-200 h-[95vh] top-[5vh]">
       <SidebarHeader />
       <SidebarContent className="flex gap-px">
         {items.map((item, index) => (
@@ -88,7 +90,7 @@ const AppSidebar = () => {
             <NavLink
               to={item.navigate}
               className={({ isActive }) =>
-                isActive ? "bg-gray-300 rounded-lg" : ""
+                isActive ? "bg-gray-300/70 rounded-lg " : ""
               }
             >
               <div className="flex justify-between hover:bg-gray-200 hover:shadow-md hover:ml-2 h-10 w-full rounded-lg items-center p-4 group/item relative overflow-hidden transition-all duration-75 shadow-2xs cursor-pointer">

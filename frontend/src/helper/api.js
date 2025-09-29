@@ -75,9 +75,9 @@ const renameFolder = async (folder) => {
   console.log("✅ Folder content response:", res);
   return res;
 };
-const moveFolder = async (obj) => {
-  console.log("📂 move folder request:", obj);
-  const res = await API.patch(`/folder/move`, obj);
+const moveFolder = async (moveFolderObj) => {
+  console.log("📂 move folder request:", moveFolderObj);
+  const res = await API.patch(`/folders/move`, moveFolderObj);
   console.log("✅ Folder content response:", res);
   return res.data;
 };

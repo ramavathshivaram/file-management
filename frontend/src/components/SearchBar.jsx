@@ -63,7 +63,7 @@ const SearchBar = () => {
   }, [searchQuery]);
 
   return (
-    <div className="flex items-center space-x-4 flex-1">
+    <div className="flex items-center">
       <div className="relative flex-1">
         {/* Search input */}
         <motion.div
@@ -122,14 +122,14 @@ const SearchBar = () => {
                 )}
                 {!loading && !error && data.length > 0 && (
                   <ul
-                    className="space-y-2 max-h-60 overflow-y-auto"
+                    className="space-y-1 max-h-70 overflow-y-auto"
                     role="listbox"
                   >
                     {data.map((item) => (
                       <li
                         key={item.id}
                         role="option"
-                        className="flex items-center gap-2 p-2 rounded hover:bg-accent cursor-pointer"
+                        className="flex items-center gap-3 p-2 rounded hover:bg-accent cursor-pointer"
                         onMouseDown={() => {
                           setSearchQuery(item.name); // set only the name
                           setOpen(false);

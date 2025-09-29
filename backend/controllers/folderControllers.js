@@ -232,9 +232,80 @@ const deleteFolder = async (req, res) => {
   }
 };
 
+const moveFolder = async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const { folderId, parentFolderId, targetId } = req.body;
+
+    // 1. Update folder's parent reference
+    const folder = await Folder.findByIdAndUpdate(
+      folderId,
+      { $set: { parentFolderId: targetId } },
+      { new: true, session } // attach session here too
+    );
+
+    if (!folder) {
+      throw new Error("Folder not found");
+    }
+
+    // 2. Remove folder reference from old parent
+    await Folder.findByIdAndUpdate(
+      parentFolderId,
+      {
+        $pull: {
+          subFolders: { folderId: folderId }, // ensure same field name as schema
+        },
+      },
+      { session }
+    );
+
+    // 3. Add folder reference to target parent
+    await Folder.findByIdAndUpdate(
+      targetId,
+      {
+        $push: {
+          subFolders: {
+            folderId: folder._id,
+            folderName: folder.folderName,
+            folderType: folder.folderType,
+            isFavorite: folder.isFavorite,
+            isImportant: folder.isImportant,
+          },
+        },
+      },
+      { session }
+    );
+
+    // ✅ Commit transaction
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(200).json({
+      message: "Folder moved successfully",
+      status: true,
+      folder,
+    });
+  } catch (error) {
+    // ❌ Rollback
+    await session.abortTransaction();
+    session.endSession();
+    console.error("Move folder error:", error);
+
+    res.status(500).json({
+      message: "Internal server error",
+      status: false,
+      error: error.message,
+    });
+  }
+};
+
+
 module.exports = {
   createFolder,
   getFolderById,
   deleteFolder,
   renameFolder,
+  moveFolder,
 };

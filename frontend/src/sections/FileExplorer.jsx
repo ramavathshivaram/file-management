@@ -1,13 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import CardComponent from "@/components/CardComponent";
-import { useQuery } from "@tanstack/react-query";
-import { getFolderContent } from "@/helper/api";
+import { useQuery, QueryClient } from "@tanstack/react-query";
+import { getFolderContent, moveFolder } from "@/helper/api";
 import useFolderStore from "@/store/folderStore";
 import CardComponentSkeleton from "@/components/skeleton/cardComponentSkeleton";
 
 const FileExplorer = () => {
+  const queryClient = new QueryClient();
   const addPathHistory = useFolderStore((state) => state.addPathHistory);
   const currentFolderId = useFolderStore((state) => state.currentFolderId);
+  const [dragFolderId, setDragFolderId] = useState(null);
+  const [dragTargetId, setDragTargetId] = useState(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ["folders", currentFolderId],
@@ -25,9 +28,18 @@ const FileExplorer = () => {
     },
     keepPreviousData: true,
   });
+  const handleDragEnd = async () => {
+    const moveFolderObj = {
+      folderId: dragFolderId,
+      parentFolderId: currentFolderId,
+      targetId: dragTargetId,
+    };
+    await moveFolder(moveFolderObj);
+    queryClient.invalidateQueries(["folders", currentFolderId]);
+  };
 
   return (
-    <div className="p-2 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 overflow-y-auto">
+    <div className="p-2 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 overflow-y-auto overflow-x-none">
       {isLoading || !data?.folder ? (
         [1, 1, 1, 1, 1].map((ele, idx) => <CardComponentSkeleton key={idx} />)
       ) : data.folder.subFolders?.length === 0 ? (
@@ -38,11 +50,10 @@ const FileExplorer = () => {
         data.folder.subFolders.map((folder) => (
           <CardComponent
             key={folder.folderId}
-            name={folder.folderName}
-            isFavorite={folder.isFavorite}
-            isImportant={folder.isImportant}
-            type="folder"
-            folderId={folder.folderId}
+            {...folder}
+            setDragFolderId={setDragFolderId}
+            setDragTargetId={setDragTargetId}
+            handleDragEnd={handleDragEnd}
           />
         ))
       )}

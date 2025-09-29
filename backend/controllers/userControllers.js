@@ -148,6 +148,14 @@ const loginUser = async (req, res) => {
 
 const updateuser = async (req, res) => {};
 
+const sarchResult = async (req, res) => {
+   try {
+     //todo
+   } catch (error) {
+     console.log(err);
+   }
+}
+
 module.exports = {
   registerUser,
   loginUser,

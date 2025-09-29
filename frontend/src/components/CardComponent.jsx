@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import {
   Card,
   CardContent,
@@ -14,11 +14,14 @@ import {
   AudioLines,
   Star,
   Component,
+  Heart,
+  Paperclip,
 } from "lucide-react";
 import Player from "@/pages/Player";
 import useFolderStore from "@/store/folderStore";
 import useSelectStore from "@/store/selectStore";
 import { toast } from "sonner";
+import { useSelectable } from "@/hooks/useSelectable";
 
 const iconMap = {
   folder: <Folder className="w-4/5 h-4/5 text-gray-600" strokeWidth={1} />,
@@ -29,41 +32,32 @@ const iconMap = {
 };
 
 const CardComponent = ({
-  name,
+  folderName,
   isFavorite = false,
   isImportant = false,
   type = "folder",
   folderId,
+  setDragFolderId,
+  setDragTargetId,
+  handleDragEnd,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const addCurrentFolderId = useFolderStore(
     (state) => state.addCurrentFolderId
   );
-  const addSelectedItem = useSelectStore((state) => state.addSelectedItem);
-  const removeSelectedItem = useSelectStore(
-    (state) => state.removeSelectedItem
-  );
-  const selectedItems = useSelectStore((state) => state.selectedItems);
-  const isSelected = selectedItems.includes(folderId);
+  const { isSelected, toggleSelect, isPathChangeble } = useSelectable(folderId);
 
   const clickTimeout = useRef(null);
 
-  // Single click: select/unselect
-  const handleSingleClick = () => {
-    if (isSelected) removeSelectedItem(folderId);
-    else addSelectedItem(folderId);
-  };
+  const handleDoubleClick = useCallback(() => {
+    if (!isPathChangeble) return;
 
-  // Double click: open folder or file
-  const handleDoubleClick = () => {
-    if (selectedItems.length === 0) {
-      if (type === "folder") {
-        addCurrentFolderId(folderId);
-      } else {
-        setIsModalOpen(true);
-      }
+    if (type === "folder") {
+      addCurrentFolderId(folderId);
+    } else {
+      setIsModalOpen(true);
     }
-  };
+  }, [isPathChangeble, type, folderId, addCurrentFolderId, setIsModalOpen]);
 
   // Handle click vs double-click
   const handleClick = () => {
@@ -73,7 +67,7 @@ const CardComponent = ({
       handleDoubleClick();
     } else {
       clickTimeout.current = setTimeout(() => {
-        handleSingleClick();
+        toggleSelect();
         clickTimeout.current = null;
       }, 250); // to activate dbl click it tooks morethan 200ms
     }
@@ -81,36 +75,40 @@ const CardComponent = ({
 
   return (
     <Card
-      className={`w-full aspect-square gap-0 hover:shadow-lg transition-shadow group/card cursor-pointer ${
+      className={`w-full bg-white aspect-square gap-0 hover:shadow-lg transition-shadow group/card cursor-pointer p-0 ${
         isSelected ? "bg-blue-200 border-blue-400 border-2" : ""
       }`}
       onClick={handleClick}
+      draggable={true}
+      onDrag={() => setDragFolderId(folderId)}
+      onDragOver={() => setDragTargetId(folderId)}
+      onDragEnd={handleDragEnd}
     >
-      <CardHeader className="flex justify-end group-hover/card:opacity-70 opacity-0 -mt-4">
-        <Component
+      <CardHeader className="flex justify-end group-hover/card:opacity-100 opacity-0 mt-2 px-2">
+        <Paperclip
           className={
             isImportant
-              ? "text-red-500 fill-red-500 transition-colors"
-              : "text-gray-500 hover:text-red-400 transition-colors"
+              ? "text-blue-600 fill-blue-600 transition-colors size-5"
+              : "text-gray-500 hover:text-blue-600 transition-colors size-5"
           }
         />
-        <Star
+        <Heart
           className={
             isFavorite
-              ? "fill-yellow-500 text-yellow-500 transition-colors"
-              : "text-gray-500 hover:text-yellow-400 transition-colors"
+              ? "text-red-500  fill-red-600 transition-colors size-5"
+              : "text-gray-500 hover:text-red-600 transition-colors size-5"
           }
         />
       </CardHeader>
 
-      <CardContent className="flex flex-col items-center justify-center">
+      <CardContent className="flex flex-col items-center justify-center -mt-5 p-0">
         {iconMap[type] || (
-          <Folder className="w-4/5 h-4/5 text-gray-600" strokeWidth={1} />
+          <Folder className="size-5 text-gray-600 m-0 p-0" strokeWidth={1} />
         )}
       </CardContent>
 
-      <CardFooter className="text-center">
-        <CardTitle className="truncate">{name}</CardTitle>
+      <CardFooter className="text-center mb-2 -mt-3">
+        <CardTitle className="truncate">{folderName}</CardTitle>
       </CardFooter>
 
       {isModalOpen && (
