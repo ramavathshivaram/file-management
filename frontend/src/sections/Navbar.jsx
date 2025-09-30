@@ -1,33 +1,16 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import {
-  Search,
-  Upload,
-  Bell,
-  User,
-  ChevronDown,
-  Moon,
-  Sun,
-  X,
-  FolderPlus,
-  FileUp,
-  Link,
-} from "lucide-react";
+import { Moon, Sun } from "lucide-react";
 import { Button } from "../components/ui/button";
-import { Input } from "../components/ui/input";
-import { Avatar, AvatarImage, AvatarFallback } from "../components/ui/avatar";
-import { Badge } from "../components/ui/badge";
-import { Separator } from "../components/ui/separator";
 import SearchBar from "@/components/SearchBar";
-import Notifications from "@/components/Notifications";
 import UserMenu from "@/components/UserMenu";
 
 const Navbar = ({ isDarkMode, onToggleDarkMode }) => {
   return (
-    <nav className="border-b sticky top-0 z-50 shadow-xs bg-white">
+    <nav className="border-b fixed top-0 z-50 w-screen shadow-xs bg-white">
       <div className="flex items-center justify-evenly h-[5vh] min-h-13 px-6">
         {/* Left Section */}
-        <h1 className="text-2xl uppercase ">file</h1>
+        <h1 className="text-2xl uppercase animate-pulse">file</h1>
         {/* search box */}
         <SearchBar />
         {/* Right Section */}
@@ -36,7 +19,7 @@ const Navbar = ({ isDarkMode, onToggleDarkMode }) => {
             variant="ghost"
             size="sm"
             onClick={onToggleDarkMode}
-            className="p-2"
+            className="p-1"
           >
             <motion.div
               initial={false}
@@ -46,7 +29,6 @@ const Navbar = ({ isDarkMode, onToggleDarkMode }) => {
               {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
             </motion.div>
           </Button>
-          <Notifications />
           <UserMenu />
         </div>
       </div>

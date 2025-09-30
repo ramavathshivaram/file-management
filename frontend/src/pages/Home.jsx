@@ -28,7 +28,7 @@ const Home = () => {
   }
   addCurrentFolderId(user.rootFolderId);
   return (
-    <div className="mx-auto  w-screen max-w-[1300px] select-none h-[95vh]">
+    <div className="mx-auto  w-screen max-w-[1300px] select-none pt-15">
       <div className="flex h-13 items-center border-b">
         {selectedItems.length === 0 ? <History /> : <Selected />}
       </div>
