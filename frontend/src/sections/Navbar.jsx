@@ -7,7 +7,7 @@ import UserMenu from "@/components/UserMenu";
 
 const Navbar = ({ isDarkMode, onToggleDarkMode }) => {
   return (
-    <nav className="border-b fixed top-0 z-50 w-screen shadow-xs bg-white">
+    <nav className="border-b fixed top-0 z-50 w-screen bg-white/60 border-b-blue-400">
       <div className="flex items-center justify-evenly h-[5vh] min-h-13 px-6">
         {/* Left Section */}
         <h1 className="text-2xl uppercase animate-pulse">file</h1>

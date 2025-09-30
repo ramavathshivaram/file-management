@@ -4,6 +4,7 @@ import Player from "@/pages/Player";
 import useFolderStore from "@/store/folderStore";
 import { useSelectable } from "@/hooks/useSelectable";
 import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 const iconComponents = {
   folder: Folder,
@@ -58,9 +59,11 @@ const CardComponent = ({
 
   return (
     <motion.div
-      className={`border p-2 rounded-lg w-full aspect-square hover:shadow-md transition-shadow group/card cursor-pointer ${
-        isSelected ? "bg-blue-200/70 border-blue-400 border-2" : ""
-      }`}
+      className={cn(
+        `border-2 p-2 rounded-lg w-full cursor-pointer bg-white/60 ${
+          isSelected ? "bg-blue-200/70 border-blue-400 border-2" : ""
+        }`
+      )}
       onClick={handleClick}
       draggable={true}
       onDragStart={() => setDragFolderId(folderId)}
@@ -74,11 +77,9 @@ const CardComponent = ({
       whileTap={{ scale: 0.95 }}
       whileDrag={{ scale: 0.9 }}
     >
-      <div className="flex flex-col items-center justify-center ">
-        <Icon className="w-4/5 h-4/5 text-gray-600" strokeWidth={1} />
-      </div>
+      <Icon className="w-4/5 h-4/5 text-gray-700 mx-auto" strokeWidth={0.5} />
 
-      <h1 className="truncate text-lg font-medium">{folderName}</h1>
+      <h1 className="truncate text-lg font-medium ">{folderName}</h1>
 
       {isModalOpen && (
         <Player

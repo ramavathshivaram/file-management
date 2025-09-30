@@ -20,7 +20,7 @@ const History = () => {
   );
   console.log("history path", pathHistory);
   return (
-    <div className="w-full flex items-center justify-between px-1">
+    <div className="w-full flex items-center justify-between px-5">
       <Breadcrumb>
         <BreadcrumbList>
           {pathHistory.length > 0 ? (
@@ -29,7 +29,7 @@ const History = () => {
                 <BreadcrumbItem
                   onClick={() => removeAfterFolderId(item.id)}
                   className="hover:text-gray-950 cursor-pointer"
-                  disable={selectedItems.length === 0}
+                  disable={selectedItems.length > 0}
                 >
                   <BreadcrumbLink>{item.name}</BreadcrumbLink>
                 </BreadcrumbItem>

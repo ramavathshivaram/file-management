@@ -123,3 +123,7 @@
   /* border:1px solid red */
   box-sizing: border-box;
 }
+
+.b *{
+  border: 1px red dashed;
+}
